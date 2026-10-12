@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caderno de questões</title>
+<style>
+:root{
+  --papel:#eef1ee; --folha:#fbfcfa; --tinta:#16241f; --suave:#55655f; --linha:#cfd7d2;
+  --acento:#0e6b5c; --certo:#1f7a4d; --errado:#b3352b; --marca:#f2d14b; --marca-fundo:#fbf3cc;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --leitura:Charter,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --papel:#101816; --folha:#17211e; --tinta:#e4ebe7; --suave:#9aaaa3; --linha:#2c3b36;
+  --acento:#5cc4b0; --certo:#5fc78e; --errado:#ef8377; --marca:#e6c53c; --marca-fundo:#3a3413;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--papel);color:var(--tinta);font:15px/1.5 var(--ui)}
+button,select,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--linha);background:var(--folha);padding:.45rem .8rem;border-radius:6px}
+button:hover{border-color:var(--acento)}
+button.principal{background:var(--acento);border-color:var(--acento);color:var(--folha);font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+.app{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--linha);padding:1rem;display:flex;flex-direction:column;gap:1rem;max-height:100vh;position:sticky;top:0;overflow:auto}
+aside h1{font:600 1.15rem var(--leitura);margin:0}
+.acoes{display:flex;flex-wrap:wrap;gap:.4rem}
+.acoes button{font-size:.85rem;padding:.35rem .6rem}
+nav h2{font-size:.8rem;font-weight:600;color:var(--suave);margin:1rem 0 .3rem}
+nav button{display:flex;justify-content:space-between;gap:.5rem;width:100%;text-align:left;border:0;background:none;padding:.35rem .5rem;border-radius:5px}
+nav button[aria-current=true]{background:var(--folha);box-shadow:inset 3px 0 0 var(--acento)}
+nav .n{color:var(--suave);font-size:.8rem;white-space:nowrap}
+nav .n.pend{color:var(--errado);font-weight:600}
+.rodape{margin-top:auto;font-size:.78rem;color:var(--suave)}
+main{padding:1.5rem clamp(1rem,4vw,3rem);max-width:60rem}
+main h2{font:600 1.5rem/1.25 var(--leitura);margin:0 0 .2rem}
+.meta{color:var(--suave);font-size:.85rem;margin-bottom:1rem}
+.abas{display:flex;gap:.3rem;border-bottom:1px solid var(--linha);margin-bottom:1.2rem}
+.abas button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;padding:.5rem .8rem}
+.abas button[aria-selected=true]{border-bottom-color:var(--acento);font-weight:600}
+.resumo{font:1.02rem/1.65 var(--leitura);max-width:68ch}
+.resumo h3{font:600 1.15rem var(--leitura);margin:1.6rem 0 .4rem}
+.resumo ul{padding-left:1.2rem;margin:.3rem 0}
+.resumo li{margin:.35rem 0}
+.resumo .dest{background:var(--marca-fundo);border-left:4px solid var(--marca);padding:.5rem .8rem;margin:.8rem 0;font-family:var(--ui);font-size:.95rem}
+.q{background:var(--folha);border:1px solid var(--linha);border-radius:8px;padding:.9rem 1rem;margin:0 0 .7rem;display:grid;grid-template-columns:2.2rem 1fr auto;gap:.2rem .8rem;align-items:start}
+.q .num{color:var(--suave);font-variant-numeric:tabular-nums}
+.q .enun{font:1rem/1.55 var(--leitura)}
+.bolhas{display:flex;gap:.35rem;align-items:center}
+/* a marca do caderno: as bolhas C e E da folha de respostas */
+.bolha{width:2.1rem;height:2.1rem;border-radius:50%;border:1.5px solid var(--tinta);background:none;padding:0;font-weight:700;display:grid;place-items:center}
+.bolha[aria-pressed=true]{background:var(--tinta);color:var(--folha)}
+.sinal{width:2.1rem;height:2.1rem;border-radius:50%;border:1.5px dashed var(--linha);background:none;padding:0;color:var(--suave)}
+.sinal[aria-pressed=true]{background:var(--marca);border:1.5px solid var(--marca);color:#16241f}
+.q.ok{border-left:5px solid var(--certo)} .q.erro{border-left:5px solid var(--errado)} .q.branco{border-left:5px solid var(--suave)}
+.veredito{grid-column:2/4;font-size:.9rem;margin-top:.4rem}
+.veredito b.c{color:var(--certo)} .veredito b.e{color:var(--errado)}
+.coment{grid-column:2/4;font:.95rem/1.55 var(--leitura);border-top:1px dashed var(--linha);padding-top:.5rem;margin-top:.3rem}
+.tags{grid-column:2/4;font-size:.75rem;color:var(--suave)}
+.barra{position:sticky;bottom:0;background:var(--papel);border-top:1px solid var(--linha);padding:.7rem 0;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.placar{background:var(--folha);border:1px solid var(--linha);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:.4rem 1.6rem;align-items:baseline}
+.placar strong{font:600 1.5rem var(--leitura);font-variant-numeric:tabular-nums}
+.vazio{max-width:46ch;margin:12vh auto;text-align:center;color:var(--suave)}
+.vazio h2{color:var(--tinta)}
+.aviso{background:var(--marca-fundo);border:1px solid var(--marca);padding:.6rem .8rem;border-radius:6px;font-size:.88rem}
+dialog{border:1px solid var(--linha);border-radius:10px;background:var(--folha);color:var(--tinta);width:min(46rem,94vw);padding:1.2rem}
+dialog::backdrop{background:rgba(10,20,17,.55)}
+dialog h3{margin:0 0 .4rem;font:600 1.2rem var(--leitura)}
+dialog textarea{width:100%;height:13rem;background:var(--papel);border:1px solid var(--linha);border-radius:6px;padding:.6rem;font:13px/1.4 ui-monospace,Consolas,monospace}
+dialog .linha{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-top:.7rem}
+#relato{white-space:pre-wrap;font-size:.88rem;margin-top:.6rem}
+#toast{position:fixed;left:50%;bottom:1.2rem;transform:translateX(-50%);background:var(--tinta);color:var(--folha);padding:.5rem .9rem;border-radius:6px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  aside{position:static;max-height:none;border-right:0;border-bottom:1px solid var(--linha)}
+  .q{grid-template-columns:1.8rem 1fr}.bolhas{grid-column:2}.veredito,.coment,.tags{grid-column:1/3}
+}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <h1>Caderno de questões</h1>
+    <div class="acoes">
+      <button class="principal" id="bImportar">Importar</button>
+      <button id="bBackup">Salvar backup</button>
+    </div>
+    <div id="alerta"></div>
+    <nav id="nav" aria-label="Matérias e tópicos"></nav>
+    <div class="rodape" id="rodape"></div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<dialog id="dlg">
+  <h3>Importar</h3>
+  <p style="margin:.2rem 0 .7rem;color:var(--suave);font-size:.9rem">Escolha os arquivos .json gerados no chat (ou um backup) ou cole o conteúdo. Tópico com o mesmo id é substituído; suas respostas são mantidas.</p>
+  <input type="file" id="arq" accept=".json,application/json,text/plain" multiple>
+  <textarea id="txt" placeholder="Ou cole o JSON aqui" style="margin-top:.6rem"></textarea>
+  <div id="relato"></div>
+  <div class="linha">
+    <button class="principal" id="bFazerImport">Importar</button>
+    <button id="bFechar">Fechar</button>
+  </div>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script>
+"use strict";
+/* ---------- armazenamento: IndexedDB (aguenta dezenas de MB), com reserva em memória ---------- */
+const DB="caderno-questoes", CHAVE="estado";
+let estado={materias:{}, prog:{}, corrigida:{}, ultimoBackup:null};
+let sel={m:null,t:null,aba:"bateria"}, persistente=true;
+function abrirDB(){return new Promise((ok,er)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>ok(r.result);r.onerror=()=>er(r.error);});}
+async function ler(){try{const db=await abrirDB();return await new Promise((ok,er)=>{const q=db.transaction("kv").objectStore("kv").get(CHAVE);q.onsuccess=()=>ok(q.result);q.onerror=()=>er(q.error);});}catch(e){persistente=false;return null;}}
+let fila=null;
+function gravar(){clearTimeout(fila);fila=setTimeout(async()=>{try{const db=await abrirDB();await new Promise((ok,er)=>{const tx=db.transaction("kv","readwrite");tx.objectStore("kv").put(estado,CHAVE);tx.oncomplete=ok;tx.onerror=()=>er(tx.error);});}catch(e){persistente=false;pintarAlerta();}},250);}
+
+/* ---------- utilidades ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>").replace(/`(.+?)`/g,"<code>$1</code>");
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2200);}
+function resumoHTML(txt){let h="",lista=false;const fecha=()=>{if(lista){h+="</ul>";lista=false;}};
+  for(const l of String(txt||"").split("\n")){const s=l.trim();if(!s){fecha();continue;}
+    if(s.startsWith("## ")){fecha();h+="<h3>"+fmt(s.slice(3))+"</h3>";}
+    else if(s.startsWith("$$ ")){fecha();h+='<div class="dest">'+fmt(s.slice(3))+"</div>";}
+    else if(s.startsWith("- ")){if(!lista){h+="<ul>";lista=true;}h+="<li>"+fmt(s.slice(2))+"</li>";}
+    else{fecha();h+="<p>"+fmt(s)+"</p>";}}
+  fecha();return h||"<p>Este tópico ainda não tem resumo.</p>";}
+const topico=()=>estado.materias[sel.m]?.topicos.find(t=>t.id===sel.t);
+const chaveT=()=>sel.m+"/"+sel.t;
+const P=id=>estado.prog[id]||(estado.prog[id]={});
+function pendencias(t){return t.questoes.filter(q=>{const p=estado.prog[q.id];return p&&(p.rever||p.marcada);}).length;}
+
+/* ---------- importação ---------- */
+function validarQ(q,erros,onde){if(!q||typeof q!=="object"){erros.push(onde+": questão inválida");return false;}
+  if(!q.id||!q.enunciado){erros.push(onde+": questão sem id ou enunciado");return false;}
+  const g=String(q.gabarito||"").trim().toUpperCase()[0];if(g!=="C"&&g!=="E"){erros.push(q.id+': gabarito deve ser "C" ou "E"');return false;}
+  q.gabarito=g;q.tags=Array.isArray(q.tags)?q.tags:[];return true;}
+function juntarTopico(m,t,rel,erros){if(!t||!t.id){erros.push("tópico sem id em "+m.id);return;}
+  const qs=(t.questoes||[]).filter(q=>validarQ(q,erros,m.id+"/"+t.id));
+  const ids=new Set();const unicas=qs.filter(q=>{if(ids.has(q.id)){erros.push(q.id+": id repetido no tópico");return false;}ids.add(q.id);return true;});
+  const novo={id:String(t.id),nome:t.nome||t.titulo||t.id,edital:t.edital||"",atualizadoEm:t.atualizadoEm||new Date().toISOString().slice(0,10),resumo:t.resumo||"",questoes:unicas};
+  const i=m.topicos.findIndex(x=>x.id===novo.id);
+  if(i>=0){m.topicos[i]=novo;rel.subst++;}else{m.topicos.push(novo);rel.novos++;}
+  rel.questoes+=unicas.length;}
+function materiaDe(o){const id=String(o.id);return estado.materias[id]||(estado.materias[id]={id,nome:o.nome||id,topicos:[]});}
+function importarObjeto(o,rel,erros){
+  if(Array.isArray(o)){o.forEach(x=>importarObjeto(x,rel,erros));return;}
+  if(!o||typeof o!=="object"){erros.push("conteúdo não reconhecido");return;}
+  if(o.tipo==="backup-caderno"){Object.values(o.materias||{}).forEach(m=>importarObjeto(m,rel,erros));
+    for(const[k,v]of Object.entries(o.prog||{}))estado.prog[k]=Object.assign(estado.prog[k]||{},v);
+    Object.assign(estado.corrigida,o.corrigida||{});rel.backup=true;return;}
+  if(o.materia&&o.topico){const m=materiaDe(o.materia);if(o.materia.nome)m.nome=o.materia.nome;juntarTopico(m,o.topico,rel,erros);return;}
+  if(o.id&&Array.isArray(o.topicos)){const m=materiaDe(o);if(o.nome)m.nome=o.nome;o.topicos.forEach(t=>juntarTopico(m,t,rel,erros));return;}
+  erros.push('formato não reconhecido: esperado {"materia":…,"topico":…} ou {"id":…,"topicos":[…]}');}
+function limparJSON(s){s=s.trim();const m=s.match(/```(?:json)?\s*([\s\S]*?)```/);if(m)s=m[1].trim();const a=s.search(/[\[{]/);return a>0?s.slice(a):s;}
+async function fazerImport(){const rel={novos:0,subst:0,questoes:0,backup:false},erros=[];const textos=[];
+  for(const f of $("#arq").files)textos.push([f.name,await f.text()]);
+  if($("#txt").value.trim())textos.push(["texto colado",$("#txt").value]);
+  if(!textos.length){$("#relato").textContent="Escolha um arquivo ou cole o JSON.";return;}
+  for(const[nome,t]of textos){try{importarObjeto(JSON.parse(limparJSON(t)),rel,erros);}catch(e){erros.push(nome+": JSON inválido ("+e.message+")");}}
+  gravar();pintar();
+  $("#relato").textContent=`Importado: ${rel.novos} tópico(s) novo(s), ${rel.subst} substituído(s), ${rel.questoes} questão(ões).`+(rel.backup?" Backup restaurado.":"")+(erros.length?"\n\nProblemas ("+erros.length+"):\n- "+erros.slice(0,12).join("\n- "):"");
+  $("#arq").value="";$("#txt").value="";}
+
+/* ---------- backup ---------- */
+function backup(){estado.ultimoBackup=new Date().toISOString();gravar();
+  const blob=new Blob([JSON.stringify({tipo:"backup-caderno",geradoEm:estado.ultimoBackup,materias:estado.materias,prog:estado.prog,corrigida:estado.corrigida})],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backup-caderno-"+estado.ultimoBackup.slice(0,10)+".json";a.click();URL.revokeObjectURL(a.href);pintarRodape();toast("Backup salvo");}
+
+/* ---------- telas ---------- */
+function pintarAlerta(){$("#alerta").innerHTML=persistente?"":'<div class="aviso">Este navegador não deixou gravar os dados. O que você fizer some ao fechar a página. Abra o arquivo no Chrome ou no Edge, fora da janela anônima.</div>';}
+function pintarRodape(){const n=Object.values(estado.materias).reduce((a,m)=>a+m.topicos.reduce((b,t)=>b+t.questoes.length,0),0);
+  const b=estado.ultimoBackup?new Date(estado.ultimoBackup).toLocaleDateString("pt-BR"):"nunca";
+  $("#rodape").textContent=`${n} questões guardadas neste navegador. Último backup: ${b}.`;}
+function pintarNav(){const ms=Object.values(estado.materias).sort((a,b)=>a.nome.localeCompare(b.nome,"pt"));
+  $("#nav").innerHTML=ms.map(m=>"<h2>"+esc(m.nome)+"</h2>"+m.topicos.map(t=>{const p=pendencias(t);
+    return `<button data-m="${esc(m.id)}" data-t="${esc(t.id)}" aria-current="${sel.m===m.id&&sel.t===t.id}"><span>${esc(t.nome)}</span><span class="n ${p?"pend":""}">${p?p+" a rever":t.questoes.length}</span></button>`;}).join("")).join("");}
+function placar(t){let c=0,e=0,b=0;for(const q of t.questoes){const r=estado.prog[q.id]?.r;if(!r||r==="B")b++;else if(r===q.gabarito)c++;else e++;}return{c,e,b,liq:c-e,n:t.questoes.length};}
+function pintarMain(){const t=topico(),el=$("#main");
+  if(!t){el.innerHTML=Object.keys(estado.materias).length?'<div class="vazio"><h2>Escolha um tópico</h2><p>Os tópicos importados aparecem na lista ao lado.</p></div>':'<div class="vazio"><h2>O caderno está vazio</h2><p>Ao fechar um tópico, o chat da matéria entrega um arquivo .json com o resumo e a bateria. Importe esse arquivo para começar.</p><p><button class="principal" id="bImportar2">Importar</button></p></div>';
+    $("#bImportar2")?.addEventListener("click",()=>$("#dlg").showModal());return;}
+  const corr=!!estado.corrigida[chaveT()];
+  let h=`<h2>${esc(t.nome)}</h2><div class="meta">${esc(estado.materias[sel.m].nome)}${t.edital?" · "+esc(t.edital):""} · ${t.questoes.length} questões · atualizado em ${esc(t.atualizadoEm)}</div>
+  <div class="abas" role="tablist">${[["resumo","Resumo"],["bateria","Bateria"],["revisao","A rever ("+pendencias(t)+")"]].map(([k,n])=>`<button role="tab" data-aba="${k}" aria-selected="${sel.aba===k}">${n}</button>`).join("")}</div>`;
+  if(sel.aba==="resumo")h+='<div class="resumo">'+resumoHTML(t.resumo)+"</div>";
+  else{const rev=sel.aba==="revisao";const lista=rev?t.questoes.filter(q=>{const p=estado.prog[q.id];return p&&(p.rever||p.marcada);}):t.questoes;
+    if(!rev&&corr){const s=placar(t);h+=`<div class="placar"><span><strong>${s.c}</strong> certos</span><span><strong>${s.e}</strong> errados</span><span><strong>${s.b}</strong> em branco</span><span><strong>${s.liq}</strong> líquido (${Math.round(100*s.liq/Math.max(1,s.n))}%)</span></div>`;}
+    if(rev&&!lista.length)h+="<p>Nada a rever neste tópico. Entram aqui as questões erradas, deixadas em branco ou marcadas.</p>";
+    h+=lista.map(q=>{const p=estado.prog[q.id]||{},r=p.r||"B",mostra=rev||corr;
+      const cls=!mostra?"":r==="B"?"branco":r===q.gabarito?"ok":"erro";
+      return `<div class="q ${cls}" data-q="${esc(q.id)}"><span class="num">${t.questoes.indexOf(q)+1}</span><div class="enun">${fmt(q.enunciado)}</div>
+      <div class="bolhas">${rev?"":["C","E"].map(x=>`<button class="bolha" data-r="${x}" aria-pressed="${r===x}" ${corr?"disabled":""} aria-label="${x==="C"?"Certo":"Errado"}">${x}</button>`).join("")}
+      <button class="sinal" data-marca aria-pressed="${!!p.marcada}" title="Marcar para rever" aria-label="Marcar para rever">★</button></div>
+      ${mostra?`<div class="veredito">Gabarito <b class="${q.gabarito==="C"?"c":"e"}">${q.gabarito==="C"?"Certo":"Errado"}</b> · sua resposta: ${r==="B"?"em branco":r==="C"?"Certo":"Errado"}${rev?' · <button data-ok style="padding:.1rem .5rem;font-size:.85rem">Já revi</button>':""}</div><div class="coment">${fmt(q.comentario||"Sem comentário.")}</div><div class="tags">${esc(q.id)}${q.tags.length?" · "+q.tags.map(esc).join(", "):""}</div>`:""}</div>`;}).join("");
+    if(!rev)h+=`<div class="barra">${corr?'<button class="principal" id="bCopiar">Copiar resultado para o chat</button><button id="bRefazer">Refazer a bateria</button>':'<button class="principal" id="bCorrigir">Corrigir bateria</button><span style="color:var(--suave);font-size:.88rem">Sem marcação conta como em branco. Na dúvida real, branco.</span>'}<button id="bApagar" style="margin-left:auto">Apagar tópico</button></div>`;}
+  el.innerHTML=h;}
+function pintar(){pintarAlerta();pintarNav();pintarMain();pintarRodape();}
+
+/* ---------- ações ---------- */
+function textoResultado(t){const s=placar(t);const l=[`Resultado da bateria: ${estado.materias[sel.m].nome} / ${t.nome} (tópico ${t.id})`,`Certos ${s.c}, errados ${s.e}, em branco ${s.b}, líquido ${s.liq} de ${s.n}.`,""];
+  t.questoes.forEach((q,i)=>{const r=estado.prog[q.id]?.r||"B";l.push(`${i+1}. ${q.id}: respondi ${r==="B"?"em branco":r}, gabarito ${q.gabarito}${r==="B"?" (branco)":r===q.gabarito?" (acerto)":" (ERRO)"}${estado.prog[q.id]?.marcada?" [marcada]":""}`);});
+  l.push("","Corrija sem suavizar: aponte o formato de item que me pegou nas erradas e nas em branco e diga se o resumo precisa de ajuste.");return l.join("\n");}
+document.addEventListener("click",async ev=>{const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.m){sel={m:b.dataset.m,t:b.dataset.t,aba:"bateria"};pintar();scrollTo(0,0);return;}
+  if(b.dataset.aba){sel.aba=b.dataset.aba;pintarMain();return;}
+  const qd=b.closest(".q"),t=topico();
+  if(qd&&t){const id=qd.dataset.q,p=P(id);
+    if(b.dataset.r){p.r=p.r===b.dataset.r?"B":b.dataset.r;}
+    else if("marca"in b.dataset){p.marcada=!p.marcada;}
+    else if("ok"in b.dataset){p.rever=false;p.marcada=false;}
+    gravar();pintarNav();pintarMain();return;}
+  if(b.id==="bCorrigir"&&t){for(const q of t.questoes){const p=P(q.id);p.r=p.r||"B";p.rever=p.r!==q.gabarito;p.em=Date.now();}estado.corrigida[chaveT()]=true;gravar();pintar();scrollTo(0,0);}
+  if(b.id==="bRefazer"&&t){for(const q of t.questoes){const p=P(q.id);delete p.r;}delete estado.corrigida[chaveT()];gravar();pintar();scrollTo(0,0);}
+  if(b.id==="bCopiar"&&t){const tx=textoResultado(t);try{await navigator.clipboard.writeText(tx);toast("Resultado copiado");}catch(e){const a=document.createElement("textarea");a.value=tx;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();toast("Resultado copiado");}}
+  if(b.id==="bApagar"&&t){if(b.dataset.certo){const m=estado.materias[sel.m];m.topicos=m.topicos.filter(x=>x.id!==t.id);if(!m.topicos.length)delete estado.materias[sel.m];sel={m:null,t:null,aba:"bateria"};gravar();pintar();}else{b.dataset.certo=1;b.textContent="Clique de novo para apagar";}}
+  if(b.id==="bImportar"){$("#relato").textContent="";$("#dlg").showModal();}
+  if(b.id==="bFechar")$("#dlg").close();
+  if(b.id==="bFazerImport")fazerImport();
+  if(b.id==="bBackup")backup();});
+
+(async()=>{const e=await ler();if(e)estado=Object.assign(estado,e);
+  if(navigator.storage?.persist)navigator.storage.persist().catch(()=>{});
+  pintar();})();
+</script>
+</body>
+</html>
